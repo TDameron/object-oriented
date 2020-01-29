@@ -6,8 +6,10 @@ require_once(dirname(__DIR__, ) . "vendor/autoload.php");
 
 require_once("autoload.php");
 
+
 use http\Exception\InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
+
 
 /**
  *
@@ -16,8 +18,9 @@ use Ramsey\Uuid\Uuid;
  **/
 
 
-//**CLASS HERE**//
-class author {
+class author implements \JsonSerializable {
+	use ValidateDate;
+	use ValidateUuid;
 
 	//properties below
 	/**
@@ -127,6 +130,23 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 			}
 			$this->authorActivationToken = $newAuthorActivationToken;
 		}
+
+	/** EDIT THE BELOW CODE SO THAT IT WILL COMPLY WITH STATE VARIABLES */
+	/**
+	 * formats the state variables for JSON serialization
+	 *
+	 * @return array resulting state variables to serialize
+	 **/
+	public function jsonSerialize() : array {
+		$fields = get_object_vars($this);
+
+		$fields["tweetId"] = $this->tweetId->toString();
+		$fields["tweetProfileId"] = $this->tweetProfileId->toString();
+
+		//format the date so that the front end can consume it
+		$fields["tweetDate"] = round(floatval($this->tweetDate->format("U.u")) * 1000);
+		return($fields);
+	}
 	}
 
 

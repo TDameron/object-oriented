@@ -1,6 +1,6 @@
 <?php
 
-namespace tdameron1\ObjectOriented;
+namespace Tdameron1\ObjectOriented;
 /**
  * Trait to Validate a mySQL Date
  *

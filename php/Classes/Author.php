@@ -23,47 +23,33 @@ class author {
 	 * @var Uuid $authorId
 	 **/
 	private $authorId;
-	public function getAuthorId($authorId) {}
 	/**
 	 * id for the Author; this is the primary key
 	 * @var string $authorActivationToken
 	 **/
 	private $authorActivationToken;
-	public function getAuthorActivationToken() : ?string {
-		return ($this->authorActivationToken);
-	}
+
 	/**
 	 * the URL used to define the avatar of the user.
 	 * @var string $authorAvatarUrl
 	 **/
 	private $authorAvatarUrl;
-	public function getAuthorAvatarURL($authorAvatarUrl) {
-		$this->authorAvatarUrl;
-	}
+
 	/**
 	 * the email address of the author
 	 * @var string $authorEmail
 	 */
 	private $authorEmail;
-	public function getAuthorEmail($authorEmail) {
-		$this->authorEmail;
-	}
 	/**
 	 * The password for the author
 	 * @var string $authorHash
 	 */
 	private $authorHash;
-	public function getAuthorHash($authorHash){
-		$this->authorHash;
-	}
 	/**
 	 * The username of the author
 	 * @var string $authorUsername
 	 */
 	private $authorUsername;
-	public function getAuthorUsername($authorUsername){
-		$this->authorUsername;
-		}
 
 //**CONSTRUCT HERE**//
 public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
@@ -78,6 +64,29 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 
 //** PLACE ACCESSOR=GETTER BEFORE EACH MUTATOR, SETTORS ARE THE SAME AS MUTATORS */
 
+	public function getAuthorId(): Uuid {
+		return ($this->authorId);
+	}
+
+	public function getAuthorActivationToken() : ?string {
+		return ($this->authorActivationToken);
+	}
+
+	public function getAuthorAvatarURL($authorAvatarUrl) {
+		$this->authorAvatarUrl;
+	}
+
+	public function getAuthorEmail($authorEmail) {
+		$this->authorEmail;
+	}
+
+	public function getAuthorHash($authorHash) {
+		$this->authorHash;
+	}
+
+	public function getAuthorUsername($authorUsername){
+		$this->authorUsername;
+	}
 /**
  * @param string $newAuthorId
  * @throws \InvalidArgumentException if the data types are not InvalidArgumentException

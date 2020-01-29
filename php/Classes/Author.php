@@ -23,13 +23,14 @@ class author {
 	 * @var Uuid $authorId
 	 **/
 	private $authorId;
+	public function getAuthorId($authorId) {}
 	/**
 	 * id for the Author; this is the primary key
 	 * @var string $authorActivationToken
 	 **/
 	private $authorActivationToken;
-	public function getAuthorActivationToken($authorActivationToken) {
-		$this->authorActivationToken = $authorActivationToken;
+	public function getAuthorActivationToken() : ?string {
+		return ($this->authorActivationToken);
 	}
 	/**
 	 * the URL used to define the avatar of the user.
@@ -63,50 +64,58 @@ class author {
 	public function getAuthorUsername($authorUsername){
 		$this->authorUsername;
 		}
-	}
 
 //**CONSTRUCT HERE**//
-	function __construct($authorId, $authorActivationToken, $authorAvatarUrl, $authorEmail, $authorHash, $authorUsername) {
-		$this->authorId = $authorId;
-		$this->authorActivationToken = $authorActivationToken;
-		$this->authorAvatarUrl = $authorAvatarUrl;
-		$this->authorEmail = $authorEmail;
-		$this->authorHash = $authorHash;
-		$this->authorUsername = $authorUsername;
+public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
+		$this->setAuthorId($newAuthorId);
+		$this->setAuthorActivationToken($newAuthorActivationToken);
+		$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
+		$this->authorEmail = setAuthorEmail($newAuthorEmail);
+		$this->authorHash = setAuthorHash($newAuthorHash);
+		$this->authorUsername = setAuthorUsername($newAuthorUsername);
 	}
 //**GETTERS AND SETTERS HERE**//
+
+//** PLACE ACCESSOR=GETTER BEFORE EACH MUTATOR, SETTORS ARE THE SAME AS MUTATORS */
 
 /**
  * @param string $newAuthorId
  * @throws \InvalidArgumentException if the data types are not InvalidArgumentException
  * @throws \RangeException if the data values are out of bounds (i.e. too long or negative)
  * @throws \TypeError if data types violate type hints
- */
-public function setAuthorId($newAuthorId) : void {
-	try {
-		$uuid = self::validateUuid($newAuthorId);
-	} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-		$exceptionType = get_class($exception);
-		throw(new $exceptionType($exception->getMessage(), 0, $exception));
-	}
+ **/
+	public function setAuthorId($newAuthorId) : void {
+		try {
+			$uuid = self::validateUuid($newAuthorId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
 
-	// convert and store the author id
-	$this->authorId = $uuid;
-
-public function setAuthorActivationToken(?string $newAuthorActivationToken): void {
-	if($newAuthorActivationToken ===null) {
-		$this->authorActivationToken === null; {
-		return;
+		// convert and store the author id
+		$this->authorId = $uuid;
 	}
-	$newAuthorActivationToken = strtolower(trim($newAuthorActivationToken));
-	if(ctype_xdigit($newAuthorActivationToken) === false) {
-		throw(new\RangeException("user activation is not valid"));
+		/**
+		 * @param string|null $newAuthorActivationToken
+		 * *@throws \InvalidArgumentException if the token is not a string or is not secure
+		 * @throws \RangeException if thge token is not exactly 32 characters
+		 * @throws \TypeError if the activation token is not a string
+		 */
+		public function setAuthorActivationToken(?string $newAuthorActivationToken): void {
+			if($newAuthorActivationToken === null) {
+				$this->authorActivationToken === null;
+				return;
+			}
+			$newAuthorActivationToken = strtolower(trim($newAuthorActivationToken));
+			if(ctype_xdigit($newAuthorActivationToken) === false) {
+				throw(new\RangeException("user activation is not valid"));
+			}
+			//make sure user activation token is only 32 characters
+			if(strlen($newAuthorActivationToken) !== 32) {
+				throw(new\RangeException("user activation token has to be 32"));
+			}
+			$this->authorActivationToken = $newAuthorActivationToken;
+		}
 	}
-	//make sure user activation token is only 32 characters
-	if(strlen($newAuthorActivationToken) !== 32) {
-		throw(new\RangeException("user activation token has to be 32"));
-	}
-	$this->authorActivationToken = $newAuthorActivationToken;
-}
 
 

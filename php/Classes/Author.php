@@ -2,7 +2,9 @@
 
 namespace Tdameron1\ObjectOriented;
 
-require_once(dirname(__DIR__,) . "autoload.php");
+require_once(dirname(__DIR__, ) . "vendor/autoload.php");
+
+require_once("autoload.php");
 
 use http\Exception\InvalidArgumentException;
 use Ramsey\Uuid\Uuid;

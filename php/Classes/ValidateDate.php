@@ -7,8 +7,8 @@ namespace Tdameron1\ObjectOriented;
  * This trait will inject a private method to validate a mySQL style date (e.g., 2017-01-14 15:23:34.132424). It will
  * convert a string representation to a DateTime object or throw an exception.
  *
- * @author Thomas Dameron <tdameron1@cnm.edu>
- * @version 1.0.0
+ * @author Dylan McDonald <dmcdonald21@cnm.edu>
+ * @version 4.0.1
  **/
 trait ValidateDate {
 	/**

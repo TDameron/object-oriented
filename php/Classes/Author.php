@@ -140,12 +140,8 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 	public function jsonSerialize() : array {
 		$fields = get_object_vars($this);
 
-		$fields["tweetId"] = $this->tweetId->toString();
-		$fields["tweetProfileId"] = $this->tweetProfileId->toString();
-
-		//format the date so that the front end can consume it
-		$fields["tweetDate"] = round(floatval($this->tweetDate->format("U.u")) * 1000);
-		return($fields);
+		$fields["authorId"] = $this->authorId->toString();
+		$fields["authorActivationToken"] = $this->authorActivationToken->toString();
 	}
 	}
 

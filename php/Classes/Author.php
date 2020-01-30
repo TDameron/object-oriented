@@ -57,7 +57,7 @@ class author implements \JsonSerializable {
 	private $authorUsername;
 
 //**CONSTRUCT HERE**//
-public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
+	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
 		$this->setAuthorId($newAuthorId);
 		$this->setAuthorActivationToken($newAuthorActivationToken);
 		$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
@@ -73,7 +73,7 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 		return ($this->authorId);
 	}
 
-	public function getAuthorActivationToken() : ?string {
+	public function getAuthorActivationToken(): ?string {
 		return ($this->authorActivationToken);
 	}
 
@@ -89,16 +89,44 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 		$this->authorHash;
 	}
 
-	public function getAuthorUsername($authorUsername){
+	/**
+	 * mutator method for profile hash password
+	 *
+	 * @param string $newProfileHash
+	 * @throws \InvalidArgumentException if the hash is not secure
+	 * @throws \RangeException if the hash is not 128 characters
+	 * @throws \TypeError if profile hash is not a string
+	 */
+	public function setAuthorHash(string $newAuthorHash): void {
+		//enforce that the hash is properly formatted
+		$newAuthorHash = trim($newAuthorHash);
+		if(empty($newAuthorHash) === true) {
+			throw(new \InvalidArgumentException("profile password hash empty or insecure"));
+		}
+		//enforce the hash is really an Argon hash
+		$authorHashInfo = password_get_info($newAuthorHash);
+		if($authorHashInfo["algoName"] !== "argon2i") {
+			throw(new \InvalidArgumentException("profile hash is not a valid hash"));
+		}
+		//enforce that the hash is exactly 97 characters.
+		if(strlen($newAuthorHash) !== 97) {
+			throw(new \RangeException("profile hash must be 97 characters"));
+		}
+		//store the hash
+		$this->authorHash = $newAuthorHash;
+	}
+
+	public function getAuthorUsername($authorUsername) {
 		$this->authorUsername;
 	}
-/**
- * @param string $newAuthorId
- * @throws \InvalidArgumentException if the data types are not InvalidArgumentException
- * @throws \RangeException if the data values are out of bounds (i.e. too long or negative)
- * @throws \TypeError if data types violate type hints
- **/
-	public function setAuthorId($newAuthorId) : void {
+
+	/**
+	 * @param string $newAuthorId
+	 * @throws \InvalidArgumentException if the data types are not InvalidArgumentException
+	 * @throws \RangeException if the data values are out of bounds (i.e. too long or negative)
+	 * @throws \TypeError if data types violate type hints
+	 **/
+	public function setAuthorId($newAuthorId): void {
 		try {
 			$uuid = self::validateUuid($newAuthorId);
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -109,27 +137,28 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 		// convert and store the author id
 		$this->authorId = $uuid;
 	}
-		/**
-		 * @param string|null $newAuthorActivationToken
-		 * *@throws \InvalidArgumentException if the token is not a string or is not secure
-		 * @throws \RangeException if thge token is not exactly 32 characters
-		 * @throws \TypeError if the activation token is not a string
-		 */
-		public function setAuthorActivationToken(?string $newAuthorActivationToken): void {
-			if($newAuthorActivationToken === null) {
-				$this->authorActivationToken === null;
-				return;
-			}
-			$newAuthorActivationToken = strtolower(trim($newAuthorActivationToken));
-			if(ctype_xdigit($newAuthorActivationToken) === false) {
-				throw(new\RangeException("user activation is not valid"));
-			}
-			//make sure user activation token is only 32 characters
-			if(strlen($newAuthorActivationToken) !== 32) {
-				throw(new\RangeException("user activation token has to be 32"));
-			}
-			$this->authorActivationToken = $newAuthorActivationToken;
+
+	/**
+	 * @param string|null $newAuthorActivationToken
+	 * *@throws \InvalidArgumentException if the token is not a string or is not secure
+	 * @throws \RangeException if thge token is not exactly 32 characters
+	 * @throws \TypeError if the activation token is not a string
+	 */
+	public function setAuthorActivationToken(?string $newAuthorActivationToken): void {
+		if($newAuthorActivationToken === null) {
+			$this->authorActivationToken === null;
+			return;
 		}
+		$newAuthorActivationToken = strtolower(trim($newAuthorActivationToken));
+		if(ctype_xdigit($newAuthorActivationToken) === false) {
+			throw(new\RangeException("user activation is not valid"));
+		}
+		//make sure user activation token is only 32 characters
+		if(strlen($newAuthorActivationToken) !== 32) {
+			throw(new\RangeException("user activation token has to be 32"));
+		}
+		$this->authorActivationToken = $newAuthorActivationToken;
+	}
 
 	/** EDIT THE BELOW CODE SO THAT IT WILL COMPLY WITH STATE VARIABLES */
 	/**
@@ -137,12 +166,10 @@ public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorA
 	 *
 	 * @return array resulting state variables to serialize
 	 **/
-	public function jsonSerialize() : array {
+	public function jsonSerialize(): array {
 		$fields = get_object_vars($this);
 
 		$fields["authorId"] = $this->authorId->toString();
 		$fields["authorActivationToken"] = $this->authorActivationToken->toString();
 	}
-	}
-
-
+}

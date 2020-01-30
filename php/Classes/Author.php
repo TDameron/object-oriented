@@ -2,14 +2,10 @@
 
 namespace tdameron1\ObjectOriented;
 
-
 require_once("autoload.php");
 require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
-
-use http\Exception\InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
-
 
 /**
  *
@@ -59,18 +55,14 @@ class Author {
 	/**
 	 * constructor for this author
 	 *
-	 * @param string|Uuid $newAuthorId id of this Tweet or null if a new Tweet
-	 * @param string|Uuid $newAuthorActivationToken id of the Profile that sent this Tweet
-	 * @param string $newAuthorAvatarUrl string containing actual tweet data
-	 * @param \DateTime|string|null $newAuthorEmail date and time Tweet was sent or null if set to current date and time
-	 * @throws \InvalidArgumentException if data types are not valid
-	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
-	 * @throws \TypeError if data types violate type hints
-	 * @throws \Exception if some other exception occurs
+	 * @param string|Uuid $newAuthorId
+	 * @param string|Uuid $newAuthorActivationToken
+	 * @param string $newAuthorAvatarUrl
+	 * @param string|null $newAuthorEmail
 	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
 	 **/
 
-	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
+	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, string $newAuthorHash, $newAuthorUsername) {
 		try{
 			$this->setAuthorId($newAuthorId);
 			$this->setAuthorActivationToken($newAuthorActivationToken);
@@ -79,8 +71,8 @@ class Author {
 			$this->authorHash = setAuthorHash($newAuthorHash);
 			$this->authorUsername = setAuthorUsername($newAuthorUsername);
 		} catch(\InvalidArgumentException | \RangeException | \TypeError $exception) {
-			$exceptionType = getclass($exception);
-			throw(new $exceptionType ($exception->getMessage(),0, $exception));
+				$exceptionType = getclass($exception);
+				throw(new $exceptionType ($exception->getMessage(),0, $exception));
 		}
 	}
 

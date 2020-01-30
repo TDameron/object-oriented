@@ -1,9 +1,7 @@
 <?php
 use tdameron1\ObjectOriented\Author;
 
-require_once(dirname(__DIR__, ) . "/vendor/autoload.php");
-
-require_once(dirname(__DIR__, ) . "/Classes/Author.php");
+require_once(dirname(__DIR__, 1) . "/Classes/Author.php");
 
 $hash = password_hash ( "password" , PASSWORD_ARGON2I (["time_cost"=> 7]));
 

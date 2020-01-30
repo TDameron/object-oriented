@@ -1,10 +1,10 @@
 <?php
 
-namespace Tdameron1\ObjectOriented;
+namespace tdameron1\ObjectOriented;
 
-require_once(dirname(__DIR__, ) . "vendor/autoload.php");
 
 require_once("autoload.php");
+require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
 
 use http\Exception\InvalidArgumentException;
@@ -18,8 +18,7 @@ use Ramsey\Uuid\Uuid;
  **/
 
 
-class author implements \JsonSerializable {
-	use ValidateDate;
+class Author {
 	use ValidateUuid;
 
 	//properties below
@@ -56,18 +55,34 @@ class author implements \JsonSerializable {
 	 */
 	private $authorUsername;
 
-//**CONSTRUCT HERE**//
-	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
-		$this->setAuthorId($newAuthorId);
-		$this->setAuthorActivationToken($newAuthorActivationToken);
-		$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
-		$this->authorEmail = setAuthorEmail($newAuthorEmail);
-		$this->authorHash = setAuthorHash($newAuthorHash);
-		$this->authorUsername = setAuthorUsername($newAuthorUsername);
-	}
-//**GETTERS AND SETTERS HERE**//
 
-//** PLACE ACCESSOR=GETTER BEFORE EACH MUTATOR, SETTORS ARE THE SAME AS MUTATORS */
+	/**
+	 * constructor for this author
+	 *
+	 * @param string|Uuid $newAuthorId id of this Tweet or null if a new Tweet
+	 * @param string|Uuid $newAuthorActivationToken id of the Profile that sent this Tweet
+	 * @param string $newAuthorAvatarUrl string containing actual tweet data
+	 * @param \DateTime|string|null $newAuthorEmail date and time Tweet was sent or null if set to current date and time
+	 * @throws \InvalidArgumentException if data types are not valid
+	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
+	 * @throws \TypeError if data types violate type hints
+	 * @throws \Exception if some other exception occurs
+	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
+	 **/
+
+	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUsername) {
+		try{
+			$this->setAuthorId($newAuthorId);
+			$this->setAuthorActivationToken($newAuthorActivationToken);
+			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
+			$this->authorEmail = setAuthorEmail($newAuthorEmail);
+			$this->authorHash = setAuthorHash($newAuthorHash);
+			$this->authorUsername = setAuthorUsername($newAuthorUsername);
+		} catch(\InvalidArgumentException | \RangeException | \TypeError $exception) {
+			$exceptionType = getclass($exception);
+			throw(new $exceptionType ($exception->getMessage(),0, $exception));
+		}
+	}
 
 	public function getAuthorId(): Uuid {
 		return ($this->authorId);
@@ -141,7 +156,7 @@ class author implements \JsonSerializable {
 	/**
 	 * @param string|null $newAuthorActivationToken
 	 * *@throws \InvalidArgumentException if the token is not a string or is not secure
-	 * @throws \RangeException if thge token is not exactly 32 characters
+	 * @throws \RangeException if the token is not exactly 32 characters
 	 * @throws \TypeError if the activation token is not a string
 	 */
 	public function setAuthorActivationToken(?string $newAuthorActivationToken): void {

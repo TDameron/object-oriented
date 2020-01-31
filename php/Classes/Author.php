@@ -60,6 +60,8 @@ class Author {
 	 * @param string|Uuid $newAuthorActivationToken
 	 * @param string $newAuthorAvatarUrl
 	 * @param string|null $newAuthorEmail
+	 * @param string $newAuthorHash string containing encrypted password for author
+	 * @param string $newAuthorUsername
 	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
 	 **/
 
@@ -74,7 +76,7 @@ class Author {
 		} catch(\InvalidArgumentException | \RangeException | \TypeError $exception) {
 				$exceptionType = get_class($exception);
 				throw(new $exceptionType ($exception->getMessage(),0, $exception));
-		}
+			}
 	}
 
 	//** ----->>>>>ADD MUTATORS FOR ABOVE, CHECK LINE 75, getclass<<<<<-----*/

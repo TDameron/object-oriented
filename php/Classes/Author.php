@@ -1,8 +1,9 @@
 <?php
 
-namespace tdameron1\ObjectOriented;
+namespace Tdameron1\ObjectOriented;
 
 require_once("autoload.php");
+//require_once("ValidateUuid.php");
 require_once(dirname(__DIR__) . "/vendor/autoload.php");
 
 use Ramsey\Uuid\Uuid;
@@ -67,15 +68,22 @@ class Author {
 			$this->setAuthorId($newAuthorId);
 			$this->setAuthorActivationToken($newAuthorActivationToken);
 			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
-			$this->authorEmail = setAuthorEmail($newAuthorEmail);
-			$this->authorHash = setAuthorHash($newAuthorHash);
-			$this->authorUsername = setAuthorUsername($newAuthorUsername);
+			$this->setAuthorEmail($newAuthorEmail);
+			$this->setAuthorHash($newAuthorHash);
+			$this->setAuthorUsername($newAuthorUsername);
 		} catch(\InvalidArgumentException | \RangeException | \TypeError $exception) {
-				$exceptionType = getclass($exception);
+				$exceptionType = get_class($exception);
 				throw(new $exceptionType ($exception->getMessage(),0, $exception));
 		}
 	}
 
+	//** ----->>>>>ADD MUTATORS FOR ABOVE, CHECK LINE 75, getclass<<<<<-----*/
+
+	/**
+	 * accessor method for author id
+	 *
+	 * @return Uuid value of author id
+	 **/
 	public function getAuthorId(): Uuid {
 		return ($this->authorId);
 	}
@@ -96,36 +104,104 @@ class Author {
 		$this->authorHash;
 	}
 
+	//** MUTATORS BELOW  **//
+
+/**
+ * mutator method for email
+ *
+ * @param string $newAuthorEmail new value of email
+ * @throws \InvalidArgumentException if $newEmail is not a valid email or insecure
+ * @throws \RangeException if $newEmail is > 128 characters
+ * @throws \TypeError if $newEmail is not a string
+ **/
+public function setAuthorEmail(string $newAuthorEmail): void {
+	// verify the email is secure
+	$newAuthorEmail = trim($newAuthorEmail);
+	$newAuthorEmail = filter_var($newAuthorEmail, FILTER_VALIDATE_EMAIL);
+	if(empty($newAuthorEmail) === true) {
+		throw(new \InvalidArgumentException("author email is empty or insecure"));
+	}
+	// verify the email will fit in the database
+	if(strlen($newAuthorEmail) > 128) {
+		throw(new \RangeException("author email is too large"));
+	}
+	// store the email
+	$this->authorEmail = $newAuthorEmail;
+}
+
 	/**
-	 * mutator method for profile hash password
+	 * mutator method for author hash password
 	 *
-	 * @param string $newProfileHash
+	 * @param string $newAuthorHash
 	 * @throws \InvalidArgumentException if the hash is not secure
 	 * @throws \RangeException if the hash is not 128 characters
-	 * @throws \TypeError if profile hash is not a string
+	 * @throws \TypeError if author hash is not a string
 	 */
 	public function setAuthorHash(string $newAuthorHash): void {
 		//enforce that the hash is properly formatted
 		$newAuthorHash = trim($newAuthorHash);
 		if(empty($newAuthorHash) === true) {
-			throw(new \InvalidArgumentException("profile password hash empty or insecure"));
+			throw(new \InvalidArgumentException("author password hash empty or insecure"));
 		}
 		//enforce the hash is really an Argon hash
 		$authorHashInfo = password_get_info($newAuthorHash);
 		if($authorHashInfo["algoName"] !== "argon2i") {
-			throw(new \InvalidArgumentException("profile hash is not a valid hash"));
+			throw(new \InvalidArgumentException("author hash is not a valid hash"));
 		}
 		//enforce that the hash is exactly 97 characters.
 		if(strlen($newAuthorHash) !== 97) {
-			throw(new \RangeException("profile hash must be 97 characters"));
+			throw(new \RangeException("author hash must be 97 characters"));
 		}
 		//store the hash
 		$this->authorHash = $newAuthorHash;
 	}
 
-	public function getAuthorUsername($authorUsername) {
-		$this->authorUsername;
+
+	/**
+	 * mutator method for at handle
+	 *
+	 * @param string $newAuthorAvatarUrl new value of at handle
+	 * @throws \InvalidArgumentException if $newAtHandle is not a string or insecure
+	 * @throws \RangeException if $newAtHandle is > 32 characters
+	 * @throws \TypeError if $newAtHandle is not a string
+	 **/
+	public function setAuthorAvatarUrl(string $newAuthorAvatarUrl) : void {
+		// verify the at handle is secure
+		$newAuthorAvatarUrl = trim($newAuthorAvatarUrl);
+		$newAuthorAvatarUrl = filter_var($newAuthorAvatarUrl, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($newAuthorAvatarUrl) === true) {
+			throw(new \InvalidArgumentException("Avatar url is empty or insecure"));
+		}
+		// verify the at handle will fit in the database
+		if(strlen($newAuthorAvatarUrl) > 32) {
+			throw(new \RangeException("Avatar url is too large"));
+		}
+		// store the at handle
+		$this->authorAvatarUrl = $newAuthorAvatarUrl;
 	}
+		/**
+		 * mutator method for at handle
+		 *
+		 * @param string $newAuthorUsername new value of at handle
+		 * @throws \InvalidArgumentException if $newAtHandle is not a string or insecure
+		 * @throws \RangeException if $newAtHandle is > 32 characters
+		 * @throws \TypeError if $newAtHandle is not a string
+		 **/
+		public
+		function setAuthorUsername(string $newAuthorUsername): void {
+			// verify the at handle is secure
+			$newAuthorUsername = trim($newAuthorUsername);
+			$newAuthorUsername = filter_var($newAuthorUsername, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+			if(empty($newAuthorUsername) === true) {
+				throw(new \InvalidArgumentException("author at handle is empty or insecure"));
+			}
+			// verify the at handle will fit in the database
+			if(strlen($newAuthorUsername) > 32) {
+				throw(new \RangeException("author at handle is too large"));
+			}
+			// store the at handle
+			$this->authorUsername = $newAuthorUsername;
+		}
 
 	/**
 	 * @param string $newAuthorId

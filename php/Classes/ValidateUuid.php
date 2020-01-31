@@ -1,5 +1,5 @@
 <?php
-namespace tdameron1\ObjectOriented;
+namespace Tdameron1\ObjectOriented;
 
 require_once(dirname(__DIR__) . "/vendor/autoload.php");
 use Ramsey\Uuid\Uuid;

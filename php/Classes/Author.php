@@ -66,7 +66,7 @@ class Author {
 	 **/
 
 	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, string $newAuthorHash, $newAuthorUsername) {
-		try{
+		try {
 			$this->setAuthorId($newAuthorId);
 			$this->setAuthorActivationToken($newAuthorActivationToken);
 			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
@@ -74,9 +74,9 @@ class Author {
 			$this->setAuthorHash($newAuthorHash);
 			$this->setAuthorUsername($newAuthorUsername);
 		} catch(\InvalidArgumentException | \RangeException | \TypeError $exception) {
-				$exceptionType = get_class($exception);
-				throw(new $exceptionType ($exception->getMessage(),0, $exception));
-			}
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType ($exception->getMessage(), 0, $exception));
+		}
 	}
 
 	//** ----->>>>>ADD MUTATORS FOR ABOVE, CHECK LINE 75, getclass<<<<<-----*/
@@ -108,28 +108,28 @@ class Author {
 
 	//** MUTATORS BELOW  **//
 
-/**
- * mutator method for email
- *
- * @param string $newAuthorEmail new value of email
- * @throws \InvalidArgumentException if $newEmail is not a valid email or insecure
- * @throws \RangeException if $newEmail is > 128 characters
- * @throws \TypeError if $newEmail is not a string
- **/
-public function setAuthorEmail(string $newAuthorEmail): void {
-	// verify the email is secure
-	$newAuthorEmail = trim($newAuthorEmail);
-	$newAuthorEmail = filter_var($newAuthorEmail, FILTER_VALIDATE_EMAIL);
-	if(empty($newAuthorEmail) === true) {
-		throw(new \InvalidArgumentException("author email is empty or insecure"));
+	/**
+	 * mutator method for email
+	 *
+	 * @param string $newAuthorEmail new value of email
+	 * @throws \InvalidArgumentException if $newEmail is not a valid email or insecure
+	 * @throws \RangeException if $newEmail is > 128 characters
+	 * @throws \TypeError if $newEmail is not a string
+	 **/
+	public function setAuthorEmail(string $newAuthorEmail): void {
+		// verify the email is secure
+		$newAuthorEmail = trim($newAuthorEmail);
+		$newAuthorEmail = filter_var($newAuthorEmail, FILTER_VALIDATE_EMAIL);
+		if(empty($newAuthorEmail) === true) {
+			throw(new \InvalidArgumentException("author email is empty or insecure"));
+		}
+		// verify the email will fit in the database
+		if(strlen($newAuthorEmail) > 128) {
+			throw(new \RangeException("author email is too large"));
+		}
+		// store the email
+		$this->authorEmail = $newAuthorEmail;
 	}
-	// verify the email will fit in the database
-	if(strlen($newAuthorEmail) > 128) {
-		throw(new \RangeException("author email is too large"));
-	}
-	// store the email
-	$this->authorEmail = $newAuthorEmail;
-}
 
 	/**
 	 * mutator method for author hash password
@@ -167,7 +167,7 @@ public function setAuthorEmail(string $newAuthorEmail): void {
 	 * @throws \RangeException if $newAtHandle is > 32 characters
 	 * @throws \TypeError if $newAtHandle is not a string
 	 **/
-	public function setAuthorAvatarUrl(string $newAuthorAvatarUrl) : void {
+	public function setAuthorAvatarUrl(string $newAuthorAvatarUrl): void {
 		// verify the at handle is secure
 		$newAuthorAvatarUrl = trim($newAuthorAvatarUrl);
 		$newAuthorAvatarUrl = filter_var($newAuthorAvatarUrl, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
@@ -181,29 +181,30 @@ public function setAuthorEmail(string $newAuthorEmail): void {
 		// store the at handle
 		$this->authorAvatarUrl = $newAuthorAvatarUrl;
 	}
-		/**
-		 * mutator method for at handle
-		 *
-		 * @param string $newAuthorUsername new value of at handle
-		 * @throws \InvalidArgumentException if $newAtHandle is not a string or insecure
-		 * @throws \RangeException if $newAtHandle is > 32 characters
-		 * @throws \TypeError if $newAtHandle is not a string
-		 **/
-		public
-		function setAuthorUsername(string $newAuthorUsername): void {
-			// verify the at handle is secure
-			$newAuthorUsername = trim($newAuthorUsername);
-			$newAuthorUsername = filter_var($newAuthorUsername, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-			if(empty($newAuthorUsername) === true) {
-				throw(new \InvalidArgumentException("author at handle is empty or insecure"));
-			}
-			// verify the at handle will fit in the database
-			if(strlen($newAuthorUsername) > 32) {
-				throw(new \RangeException("author at handle is too large"));
-			}
-			// store the at handle
-			$this->authorUsername = $newAuthorUsername;
+
+	/**
+	 * mutator method for at handle
+	 *
+	 * @param string $newAuthorUsername new value of at handle
+	 * @throws \InvalidArgumentException if $newAtHandle is not a string or insecure
+	 * @throws \RangeException if $newAtHandle is > 32 characters
+	 * @throws \TypeError if $newAtHandle is not a string
+	 **/
+	public
+	function setAuthorUsername(string $newAuthorUsername): void {
+		// verify the at handle is secure
+		$newAuthorUsername = trim($newAuthorUsername);
+		$newAuthorUsername = filter_var($newAuthorUsername, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($newAuthorUsername) === true) {
+			throw(new \InvalidArgumentException("author at handle is empty or insecure"));
 		}
+		// verify the at handle will fit in the database
+		if(strlen($newAuthorUsername) > 32) {
+			throw(new \RangeException("author at handle is too large"));
+		}
+		// store the at handle
+		$this->authorUsername = $newAuthorUsername;
+	}
 
 	/**
 	 * @param string $newAuthorId
@@ -257,4 +258,88 @@ public function setAuthorEmail(string $newAuthorEmail): void {
 		$fields["authorId"] = $this->authorId->toString();
 		$fields["authorActivationToken"] = $this->authorActivationToken->toString();
 	}
-}
+	//**Object Oriented Phase II methods below. **//
+
+	/**
+	 * deletes this author from mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function delete(\PDO $pdo): void {
+
+		// create query template
+		$query = "DELETE FROM author WHERE authorId = :authorId";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holder in the template
+		$parameters = ["authorId" => $this->authorId->getBytes()];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * updates this Author in mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function update(\PDO $pdo): void {
+
+		// create query template
+		$query = "UPDATE author SET authorId = :authorId, authorAvatarUrl = :authorAvatarUrl WHERE authorId = :authorId";
+		$statement = $pdo->prepare($query);
+
+
+		$parameters = ["authorId" => $this->authorId->getBytes(), "authorActivationToken" => $this->authorActivationToken->getBytes(), "authorAvatarUrl" => $this->authorAvatarUrl];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * a method that returns an array of Authors
+	 *
+	 * @param \PDO $pdo
+	 * @param string $authorUsername
+	 * @return \SPLFixedArray
+	 */
+	public static function getAuthorByAuthorUsername(\PDO $pdo, string $authorUsername): \SPLFixedArray {
+
+		//sanitize the description before searching
+		//** trims the author username to a set number of characters for security */
+		$authorUsername = trim($authorUsername);
+		//**filter_var filters a variable, the format is: filter_var($authorUsername <-variable goes here, FILTER_SANITIZE_STRING <- filters go here seperated by commas)
+		//**FILTER_SANITZE_STRING will strip tags, FILTER_FLAG_NO_ENCODE_QUOTES will strip invalid characters. **//
+		$authorUsername = filter_var($authorUsername, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+
+
+		// escape any mySQL wild cards
+		//** str_replace("%","\\%", $authorUsername) will replace the command "%" with the string character "%", this will prevent security breaches.*/
+		$result = str_replace("%", "\\%", $authorUsername);
+		$authorUsername = str_replace("_", "\\", $result);
+
+		// create query template
+		$query = "SELECT authorId, authorActivationToken, authorAvatarUrl, authorEmail, authorHash, authorUsername FROM Author LIKE :authorUsername";
+		$statement = $pdo->prepare($query);
+		//bind the authorUsername to the place holder in the template
+		$authorUsername = "%authorUsername%";
+		$parameters = ["authorUsername" => $authorUsername];
+		$statement->execute($parameters);
+
+		// building an array of Authors
+		$authorArray = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$author = new Author($row["authorId"], $row["authorActivationToken"], $row["authorAvatarUrl"], $row["authorEmail"], $row["authorHash"], $row["authorUsername"]);
+				$authorArray[$authorArray->key()] = $author;
+				$authorArray->next();
+			} catch(\Exception $exception) {
+				// if the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($authorArray);
+
+	}
+}	

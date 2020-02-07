@@ -252,7 +252,7 @@ class Author {
 	 *
 	 * @return array resulting state variables to serialize
 	 **/
-	public function jsonSerialize(): array {
+	public function jsonSerialize(): \SplFixedSplFixedArray {
 		$fields = get_object_vars($this);
 
 		$fields["authorId"] = $this->authorId->toString();
@@ -315,11 +315,11 @@ class Author {
 	}
 
 	/**
-	 * a method that returns an array of Authors
+	 * a method that returns an SplFixedArray of Authors
 	 *
 	 * @param \PDO $pdo
 	 * @param string $authorUsername
-	 * @return authorArray
+	 * @return authorSplFixedArray
 	 */
 	public static function getAuthorByAuthorUsername(\PDO $pdo, string $authorUsername): array {
 
@@ -345,7 +345,7 @@ class Author {
 		$statement->execute($parameters);
 
 		// building an array of Authors
-		$authorArray = array($statement->rowCount());
+		$authorArray = SplFixedArray($statement->rowCount());
 		$statement->setFetchMode(\PDO::FETCH_ASSOC);
 		while(($row = $statement->fetch()) !== false) {
 			try {
@@ -363,7 +363,7 @@ class Author {
 
 		// getting a single Author
 	/**
-	 * gets the Author by authoId
+	 * gets the Author by authorId
 	 *
 	 * @param \PDO $pdo PDO connection object
 	 * @param Uuid|string $authorId author id to search for

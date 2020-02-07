@@ -301,9 +301,9 @@ class Author {
 	 *
 	 * @param \PDO $pdo
 	 * @param string $authorUsername
-	 * @return \SPLFixedArray
+	 * @return authorArray
 	 */
-	public static function getAuthorByAuthorUsername(\PDO $pdo, string $authorUsername): \SPLFixedArray {
+	public static function getAuthorByAuthorUsername(\PDO $pdo, string $authorUsername): array {
 
 		//sanitize the description before searching
 		//** trims the author username to a set number of characters for security */
@@ -327,7 +327,7 @@ class Author {
 		$statement->execute($parameters);
 
 		// building an array of Authors
-		$authorArray = new \SplFixedArray($statement->rowCount());
+		$authorArray = array($statement->rowCount());
 		$statement->setFetchMode(\PDO::FETCH_ASSOC);
 		while(($row = $statement->fetch()) !== false) {
 			try {
